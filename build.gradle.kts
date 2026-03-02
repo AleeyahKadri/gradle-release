@@ -30,16 +30,15 @@ repositories {
 }
 
 dependencies {
-    testCompile("org.spockframework:spock-core:2.1-groovy-2.5") {
+    testImplementation("org.spockframework:spock-core:2.1-groovy-2.5") {
         exclude(group = "org.codehaus.groovy")
     }
-    testCompile("org.eclipse.jgit:org.eclipse.jgit:5.0.3.201809091024-r")
-    testCompile("cglib:cglib-nodep:3.2.8")
+    testImplementation("org.eclipse.jgit:org.eclipse.jgit:5.0.3.201809091024-r")
+    testImplementation("cglib:cglib-nodep:3.2.8")
     testImplementation(gradleTestKit())
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
 
     // work-around for https://github.com/gradle/gradle/issues/16774
-    val serviceFactory = project.gradle.sharedServices
     testRuntimeOnly(files((project as org.gradle.api.internal.project.ProjectInternal).services.get(ModuleRegistry::class.java).getModule("gradle-tooling-api-builders").classpath.asFiles.first()))
     testRuntimeOnly("com.google.guava:guava:27.1-android")
 }
