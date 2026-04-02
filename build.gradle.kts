@@ -1,10 +1,6 @@
-import net.researchgate.release.ReleaseExtension
-import org.gradle.api.Action
 import org.gradle.api.internal.classpath.ModuleRegistry
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.the
+import org.gradle.kotlin.dsl.withGroovyBuilder
 import org.gradle.kotlin.dsl.withType
 
 buildscript {
@@ -26,7 +22,7 @@ plugins {
     id("maven-publish")
     id("net.researchgate.release") version "2.8.0"
     id("com.gradle.plugin-publish") version "0.18.0"
-    idea
+    id("idea")
 }
 
 group = "net.researchgate"
@@ -36,11 +32,11 @@ repositories {
 }
 
 dependencies {
-    testCompile("org.spockframework:spock-core:2.1-groovy-2.5") {
+    testImplementation("org.spockframework:spock-core:2.1-groovy-2.5") {
         exclude(group = "org.codehaus.groovy")
     }
-    testCompile("org.eclipse.jgit:org.eclipse.jgit:5.0.3.201809091024-r")
-    testCompile("cglib:cglib-nodep:3.2.8")
+    testImplementation("org.eclipse.jgit:org.eclipse.jgit:5.0.3.201809091024-r")
+    testImplementation("cglib:cglib-nodep:3.2.8")
     testImplementation(gradleTestKit())
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
 
@@ -82,11 +78,13 @@ tasks.withType<Test>().configureEach {
     systemProperties["currentVersion"] = project.version
 }
 
-the<ReleaseExtension>().git(
-    Action {
-        it.requireBranch.set("(main|\\d+\\.\\d+)")
+configure(listOf(extensions.getByName("release"))) {
+    withGroovyBuilder {
+        "git" {
+            setProperty("requireBranch", "(main|\\d+\\.\\d+)")
+        }
     }
-)
+}
 
 tasks.wrapper {
     gradleVersion = "6.9.2"
